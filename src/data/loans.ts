@@ -6,9 +6,20 @@
 
 export type TipoPrestamo = 'personal' | 'prendario' | 'hipotecario'
 
+/** Sector al que pertenece el banco, según su tipo de capital mayoritario. */
+export type SectorBancario = 'publico' | 'privado-nacional' | 'extranjero'
+
+export const SECTORES_BANCARIOS: { key: SectorBancario; label: string; descripcion: string }[] = [
+  { key: 'publico', label: 'Banca pública', descripcion: 'Bancos de capital estatal (nacional o provincial).' },
+  { key: 'privado-nacional', label: 'Banca privada nacional', descripcion: 'Bancos de capital privado argentino.' },
+  { key: 'extranjero', label: 'Banca extranjera', descripcion: 'Bancos con casa matriz o capital mayoritario extranjero.' },
+]
+
 export interface LoanOffer {
   id: string
   banco: string
+  /** Sector bancario al que pertenece la entidad (clasificación orientativa por tipo de capital). */
+  sector: SectorBancario
   tipo: TipoPrestamo
   /** Tasa Nominal Anual, en % */
   tna: number
@@ -30,6 +41,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'nacion-personal',
     banco: 'Banco Nación',
+    sector: 'publico',
     tipo: 'personal',
     tna: 53,
     cft: 95,
@@ -45,6 +57,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'macro-personal',
     banco: 'Banco Macro',
+    sector: 'privado-nacional',
     tipo: 'personal',
     tna: 53,
     cft: 95,
@@ -60,6 +73,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'santander-personal',
     banco: 'Banco Santander',
+    sector: 'extranjero',
     tipo: 'personal',
     tna: 85,
     cft: 168.26,
@@ -75,6 +89,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'galicia-personal',
     banco: 'Banco Galicia',
+    sector: 'privado-nacional',
     tipo: 'personal',
     tna: 79,
     cft: 150,
@@ -90,6 +105,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'bbva-personal',
     banco: 'BBVA',
+    sector: 'extranjero',
     tipo: 'personal',
     tna: 129,
     cft: 252,
@@ -105,6 +121,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'provincia-personal',
     banco: 'Banco Provincia',
+    sector: 'publico',
     tipo: 'personal',
     tna: 65,
     cft: 115,
@@ -120,6 +137,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'ciudad-personal',
     banco: 'Banco Ciudad',
+    sector: 'publico',
     tipo: 'personal',
     tna: 68,
     cft: 120,
@@ -135,6 +153,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'credicoop-personal',
     banco: 'Banco Credicoop',
+    sector: 'privado-nacional',
     tipo: 'personal',
     tna: 70,
     cft: 125,
@@ -150,6 +169,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'supervielle-personal',
     banco: 'Banco Supervielle',
+    sector: 'privado-nacional',
     tipo: 'personal',
     tna: 88,
     cft: 155,
@@ -165,6 +185,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'icbc-personal',
     banco: 'ICBC',
+    sector: 'extranjero',
     tipo: 'personal',
     tna: 90,
     cft: 160,
@@ -180,6 +201,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'comafi-personal',
     banco: 'Banco Comafi',
+    sector: 'privado-nacional',
     tipo: 'personal',
     tna: 92,
     cft: 165,
@@ -195,6 +217,7 @@ export const PRESTAMOS_PERSONALES: LoanOffer[] = [
   {
     id: 'hsbc-personal',
     banco: 'HSBC Argentina',
+    sector: 'extranjero',
     tipo: 'personal',
     tna: 95,
     cft: 170,
@@ -213,6 +236,7 @@ export const PRESTAMOS_PRENDARIOS: LoanOffer[] = [
   {
     id: 'nacion-prendario',
     banco: 'Banco Nación',
+    sector: 'publico',
     tipo: 'prendario',
     tna: 30,
     cft: 45,
@@ -228,6 +252,7 @@ export const PRESTAMOS_PRENDARIOS: LoanOffer[] = [
   {
     id: 'santander-prendario',
     banco: 'Banco Santander',
+    sector: 'extranjero',
     tipo: 'prendario',
     tna: 0,
     cft: 35.23,
@@ -244,6 +269,7 @@ export const PRESTAMOS_PRENDARIOS: LoanOffer[] = [
   {
     id: 'bbva-prendario',
     banco: 'BBVA',
+    sector: 'extranjero',
     tipo: 'prendario',
     tna: 53.9,
     cft: 78,
@@ -259,6 +285,7 @@ export const PRESTAMOS_PRENDARIOS: LoanOffer[] = [
   {
     id: 'macro-prendario',
     banco: 'Banco Macro',
+    sector: 'privado-nacional',
     tipo: 'prendario',
     tna: 42,
     cft: 65,
@@ -274,6 +301,7 @@ export const PRESTAMOS_PRENDARIOS: LoanOffer[] = [
   {
     id: 'provincia-prendario',
     banco: 'Banco Provincia',
+    sector: 'publico',
     tipo: 'prendario',
     tna: 45,
     cft: 70,
@@ -289,6 +317,7 @@ export const PRESTAMOS_PRENDARIOS: LoanOffer[] = [
   {
     id: 'galicia-prendario',
     banco: 'Banco Galicia',
+    sector: 'privado-nacional',
     tipo: 'prendario',
     tna: 48,
     cft: 75,
@@ -304,6 +333,7 @@ export const PRESTAMOS_PRENDARIOS: LoanOffer[] = [
   {
     id: 'ciudad-prendario',
     banco: 'Banco Ciudad',
+    sector: 'publico',
     tipo: 'prendario',
     tna: 44,
     cft: 68,
@@ -322,6 +352,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'nacion-hipotecario',
     banco: 'Banco Nación',
+    sector: 'publico',
     tipo: 'hipotecario',
     tna: 3.5,
     cft: 6.5,
@@ -338,6 +369,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'ciudad-hipotecario',
     banco: 'Banco Ciudad',
+    sector: 'publico',
     tipo: 'hipotecario',
     tna: 7.5,
     cft: 11,
@@ -354,6 +386,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'bbva-hipotecario',
     banco: 'BBVA',
+    sector: 'extranjero',
     tipo: 'hipotecario',
     tna: 7.5,
     cft: 11,
@@ -370,6 +403,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'santander-hipotecario',
     banco: 'Banco Santander',
+    sector: 'extranjero',
     tipo: 'hipotecario',
     tna: 8,
     cft: 11.8,
@@ -385,6 +419,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'galicia-hipotecario',
     banco: 'Banco Galicia',
+    sector: 'privado-nacional',
     tipo: 'hipotecario',
     tna: 8.5,
     cft: 12.3,
@@ -400,6 +435,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'hipotecario-hipotecario',
     banco: 'Banco Hipotecario',
+    sector: 'privado-nacional',
     tipo: 'hipotecario',
     tna: 8.5,
     cft: 12.5,
@@ -415,6 +451,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'macro-hipotecario',
     banco: 'Banco Macro',
+    sector: 'privado-nacional',
     tipo: 'hipotecario',
     tna: 9,
     cft: 13,
@@ -430,6 +467,7 @@ export const PRESTAMOS_HIPOTECARIOS: LoanOffer[] = [
   {
     id: 'provincia-hipotecario',
     banco: 'Banco Provincia',
+    sector: 'publico',
     tipo: 'hipotecario',
     tna: 8,
     cft: 11.5,

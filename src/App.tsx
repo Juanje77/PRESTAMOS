@@ -1,10 +1,18 @@
 import { useMemo, useState } from 'react'
 import { FUENTES, TODOS_LOS_PRESTAMOS, type TipoPrestamo } from './data/loans'
-import { calcularOferta, rankearPorCFT } from './lib/finance'
+import { agruparPorSector, calcularOferta, rankearPorCFT } from './lib/finance'
 import { formatoMoneda } from './lib/finance'
 import { RankingChart } from './components/RankingChart'
 import { LoanTable } from './components/LoanTable'
 import { BestOfferCard } from './components/BestOfferCard'
+import { SectoresPanel } from './components/SectoresPanel'
+
+type Vista = 'bancos' | 'sectores'
+
+const VISTAS: { key: Vista; label: string }[] = [
+  { key: 'bancos', label: 'Por banco' },
+  { key: 'sectores', label: 'Por sector bancario' },
+]
 
 const TABS: { key: TipoPrestamo; label: string; montoDefault: number; plazoDefault: number }[] = [
   { key: 'personal', label: 'Préstamos personales', montoDefault: 5000000, plazoDefault: 24 },
@@ -18,6 +26,7 @@ function App() {
 
   const [monto, setMonto] = useState(tabConfig.montoDefault)
   const [plazo, setPlazo] = useState(tabConfig.plazoDefault)
+  const [vista, setVista] = useState<Vista>('bancos')
 
   function cambiarTab(next: TipoPrestamo) {
     const cfg = TABS.find((t) => t.key === next)!
@@ -33,6 +42,7 @@ function App() {
   }, [tipo, monto, plazo])
 
   const mejor = ofertas[0]
+  const resumenesPorSector = useMemo(() => agruparPorSector(ofertas), [ofertas])
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -117,21 +127,51 @@ function App() {
         </section>
       )}
 
-      <section className="mb-8">
-        <h2 className="mb-3 text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-          Ranking por Costo Financiero Total (CFT anual)
-        </h2>
-        <div className="rounded-xl border p-4" style={{ borderColor: 'var(--border)', background: 'var(--surface-1)' }}>
-          <RankingChart ofertas={ofertas} />
-        </div>
-      </section>
+      <nav className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Vista de comparación">
+        {VISTAS.map((v) => (
+          <button
+            key={v.key}
+            role="tab"
+            aria-selected={vista === v.key}
+            onClick={() => setVista(v.key)}
+            className="rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors"
+            style={
+              vista === v.key
+                ? { background: 'var(--text-primary)', borderColor: 'var(--text-primary)', color: 'var(--surface-1)' }
+                : { borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--surface-1)' }
+            }
+          >
+            {v.label}
+          </button>
+        ))}
+      </nav>
 
-      <section className="mb-10">
-        <h2 className="mb-3 text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-          Detalle de todas las ofertas
-        </h2>
-        <LoanTable ofertas={ofertas} tipo={tipo} />
-      </section>
+      {vista === 'bancos' ? (
+        <>
+          <section className="mb-8">
+            <h2 className="mb-3 text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Ranking por Costo Financiero Total (CFT anual)
+            </h2>
+            <div className="rounded-xl border p-4" style={{ borderColor: 'var(--border)', background: 'var(--surface-1)' }}>
+              <RankingChart ofertas={ofertas} />
+            </div>
+          </section>
+
+          <section className="mb-10">
+            <h2 className="mb-3 text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Detalle de todas las ofertas
+            </h2>
+            <LoanTable ofertas={ofertas} tipo={tipo} />
+          </section>
+        </>
+      ) : (
+        <section className="mb-10">
+          <h2 className="mb-3 text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+            Sectores bancarios: pública, privada nacional y extranjera
+          </h2>
+          <SectoresPanel resumenes={resumenesPorSector} />
+        </section>
+      )}
 
       <footer className="border-t pt-6 pb-10 text-xs" style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}>
         <p className="mb-2 font-medium" style={{ color: 'var(--text-secondary)' }}>
