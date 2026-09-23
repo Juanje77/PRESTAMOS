@@ -1,4 +1,4 @@
-import type { LoanOffer } from '../data/loans'
+import type { LoanOffer, SectorBancario } from '../data/loans'
 
 /** Cuota mensual fija por sistema francés de amortización. */
 export function cuotaFrancesa(monto: number, tnaPct: number, plazoMeses: number): number {
@@ -36,6 +36,40 @@ export function calcularOferta(oferta: LoanOffer, monto: number, plazoMeses: num
 /** Ordena de más a menos conveniente según CFT (menor CFT = más conveniente). */
 export function rankearPorCFT(ofertas: OfertaCalculada[]): OfertaCalculada[] {
   return [...ofertas].sort((a, b) => a.cft - b.cft)
+}
+
+export interface ResumenSector {
+  sector: SectorBancario
+  ofertas: OfertaCalculada[]
+  cantidadBancos: number
+  cftPromedio: number
+  tnaPromedio: number
+  mejorOferta: OfertaCalculada
+}
+
+/** Agrupa las ofertas por sector bancario y calcula sus estadísticas de conveniencia. */
+export function agruparPorSector(ofertas: OfertaCalculada[]): ResumenSector[] {
+  const sectores = new Map<SectorBancario, OfertaCalculada[]>()
+  for (const oferta of ofertas) {
+    const lista = sectores.get(oferta.sector) ?? []
+    lista.push(oferta)
+    sectores.set(oferta.sector, lista)
+  }
+
+  const resumenes: ResumenSector[] = []
+  for (const [sector, lista] of sectores) {
+    const ordenadas = [...lista].sort((a, b) => a.cft - b.cft)
+    resumenes.push({
+      sector,
+      ofertas: ordenadas,
+      cantidadBancos: ordenadas.length,
+      cftPromedio: ordenadas.reduce((s, o) => s + o.cft, 0) / ordenadas.length,
+      tnaPromedio: ordenadas.reduce((s, o) => s + o.tna, 0) / ordenadas.length,
+      mejorOferta: ordenadas[0],
+    })
+  }
+
+  return resumenes.sort((a, b) => a.mejorOferta.cft - b.mejorOferta.cft)
 }
 
 export function formatoMoneda(valor: number): string {
